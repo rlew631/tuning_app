@@ -1,3 +1,18 @@
+.main-table-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.data-table-container .table-axes-container {
+  display: block;
+} 
+
+.table {
+  justify-content: center;
+}
+
+/* Original react styling */
 .App {
   text-align: center;
 }

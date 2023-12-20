@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Tuning App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+see: https://handsontable.com/docs/react-data-grid/grid-size/ for styling the table / resizing etc.
 
 ## Available Scripts
 

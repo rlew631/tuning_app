@@ -7,6 +7,33 @@ import EditableTable from './components/EditableTable';
 
 registerAllModules();
 
+function customStringify(object) {
+  if (Array.isArray(object)) {
+      // Join the array values with comma and space for inline display.
+      return `[${object.map(item => customStringify(item)).join(", ")}]`;
+  } else if (typeof object === 'object' && object !== null) {
+      // Create an array of stringified key-value pairs.
+      const properties = Object.keys(object).map(key => {
+          const value = customStringify(object[key]);
+          return `"${key}": ${value}`;
+      });
+      // Join the properties with a comma and newline for each key/value pair.
+      return `{\n\t${properties.join(",\n\t")}\n}`;
+  } else {
+      // Directly return the stringified version of the value.
+      return JSON.stringify(object);
+  }
+}
+
+function FormattedJsonDisplay({ data }) {
+  return (
+      <pre style={{"text-align" : "left"}}>
+          <code>
+              {customStringify(data)}
+          </code>
+      </pre>
+  );
+}
 
 function App() {
   const [tables, setTables] = useState([]);
@@ -15,7 +42,17 @@ function App() {
 
   const addTable = () => {
     if (newTableName) {
-      const newTable = <EditableTable key={newTableName} tableName={newTableName} />;
+      // const newTable = <EditableTable key={newTableName} tableName={newTableName} />;
+      const newTable = {
+        key: newTableName,
+        colHeaders: ['0','1','2'],
+        rowHeaders: [800,1200,1600],
+        data: [
+          [10, 11, 12],
+          [20, 11, 14],
+          [30, 15, 12]
+        ]
+      }
       setTables([...tables, newTable])
       setNewTableName('');
       setRemoveTableName(newTable.key);
@@ -58,11 +95,30 @@ function App() {
           <button onClick={() => removeTable(removeTableName)}>Remove Table</button>
         </div>
       </div>
-      {tables.map(table => (
-        <div key={table.key}>
-          {table}
-        </div>
-      ))}
+      <div>
+        {tables.map(table => (
+          <div key={table.key}>
+            <EditableTable
+              tableName={table.key}
+              tableInfo={table}
+              updateTable={(updatedTable) => {
+                const updatedTables = tables.map(t => 
+                  t.key === updatedTable.key ? updatedTable : t
+                );
+                setTables(updatedTables);
+                console.log(updatedTables);
+              }}
+            />
+          </div>
+        ))}
+      </div>
+      <div>
+        {tables.map(table => (
+          <div key={table.key}>
+            <FormattedJsonDisplay data={table}/>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

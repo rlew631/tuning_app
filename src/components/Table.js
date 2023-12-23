@@ -1,15 +1,16 @@
 import React, { useRef, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 
-function EditableTable( {tableName, tableInfo, updateTable} ) {
+function EditableTable( {
+  tableName, 
+  data,
+  setData,
+  colHeaders,
+  setColHeaders,
+  rowHeaders,
+  setRowHeaders
+} ) {
   const hotRef = useRef(null);
-  const [colHeaders, setColHeaders] = useState(['0', '1', '2']);
-  const [rowHeaders, setRowHeaders] = useState([800, 1600, 2000]);
-  const [data, setData] = useState([
-    [10, 11, 12],
-    [20, 11, 14],
-    [30, 15, 12]
-  ]);
 
   // Handle changes in headers
   const handleHeadersChange = (changes) => {
@@ -21,41 +22,30 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
   };
 
   const addColumn = () => {
-    // update formatting of all setter functions to match this one
-    const updatedTableInfo = {
-      ...tableInfo,
-      colHeaders: [...colHeaders, `NewCol${colHeaders.length + 1}`],
-      data: data.map(row => [...row, row[row.length - 1]])
-    };
-    setColHeaders(updatedTableInfo.colHeaders);
-    setData(updatedTableInfo.data);
-    updateTable(updatedTableInfo);
+    setColHeaders(colHeaders => [...colHeaders, `NewCol${colHeaders.length + 1}`]);
+    setData(data => data.map(row => [...row, row[row.length - 1]]));
+    hotRef.current.hotInstance.refreshDimensions(); // optional?
   };
 
   const removeColumn = () => {
     if (data[0].length > 1) {
-      setColHeaders(colHeaders.slice(0, -1));
-      setData(data.map(row => row.slice(0, -1)));
-      const updatedTableInfo = {
-        ...tableInfo,
-        colHeaders: colHeaders.slice(0, -1),
-        data: data.map(row => row.slice(0, -1))
-      };
-      updateTable(updatedTableInfo);
+      setColHeaders(colHeaders => colHeaders.slice(0, -1));
+      setData(data => data.map(row => row.slice(0, -1)));
+      hotRef.current.hotInstance.refreshDimensions(); // optional?
     }
   };
 
   const addRow = () => {
-    setRowHeaders([...rowHeaders, rowHeaders.length + 2022]);
-    setData([...data, [...data[data.length - 1]]]);
-    // hotRef.current.hotInstance.refreshDimensions(); // optional?
+    setRowHeaders(rowHeaders => [...rowHeaders, rowHeaders.length + 2022]);
+    setData(data => [...data, [...data[data.length - 1]]]);
+    hotRef.current.hotInstance.refreshDimensions(); // optional?
   };
 
   const removeRow = () => {
     if (data.length > 1) {
-      setRowHeaders(rowHeaders.slice(0, -1));
-      setData(data.slice(0, -1));
-      // hotRef.current.hotInstance.refreshDimensions(); // optional?
+      setRowHeaders(rowHeaders => rowHeaders.slice(0, -1));
+      setData(data => data.slice(0, -1));
+      hotRef.current.hotInstance.refreshDimensions(); // optional?
     }
   };
   return (
@@ -118,4 +108,26 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
   )
 }
 
-export default EditableTable
+function TableComponent({ tableName }) {
+  const [colHeaders, setColHeaders] = useState(['0', '1', '2']);
+  const [rowHeaders, setRowHeaders] = useState([800, 1600, 2000]);
+  const [data, setData] = useState([
+    [10, 11, 12],
+    [20, 11, 14],
+    [30, 15, 12]
+  ]);
+
+  return (
+    <EditableTable 
+      colHeaders={colHeaders}
+      setColHeaders={setColHeaders}
+      rowHeaders={rowHeaders}
+      setRowHeaders={setRowHeaders}
+      data={data}
+      setData={setData}
+      tableName={tableName}
+    />
+  );
+}
+
+export default TableComponent

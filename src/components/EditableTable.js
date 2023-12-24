@@ -12,13 +12,32 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
   ]);
 
   // Handle changes in headers
-  const handleHeadersChange = (changes) => {
-    setColHeaders(colHeaders => {
-      let newHeaders = [...colHeaders];
-      newHeaders[changes[1]] = changes[3];
-      return newHeaders;
-    });
+  const handleColHeadersChange = (changes) => {
+    const updatedTableInfo = {
+      ...tableInfo,
+    };
+    updatedTableInfo.colHeaders[changes[1]] = changes[3]
+    setColHeaders(updatedTableInfo.colHeaders)
+    updateTable(updatedTableInfo)
   };
+
+  const handleRowHeadersChange = (changes) => {
+    const updatedTableInfo = {
+      ...tableInfo,
+    };
+    updatedTableInfo.rowHeaders[changes[1]] = changes[3]
+    setRowHeaders(updatedTableInfo.rowHeaders)
+    updateTable(updatedTableInfo)
+  };
+
+  const handleDataChange = (changes) => {
+    const updatedTableInfo = {
+      ...tableInfo
+    };
+    updatedTableInfo.data[changes[0][changes[1]]] = changes[3]
+    setData(updatedTableInfo.data)
+    updateTable(updatedTableInfo)
+  }
 
   const addColumn = () => {
     // update formatting of all setter functions to match this one
@@ -34,28 +53,38 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
 
   const removeColumn = () => {
     if (data[0].length > 1) {
-      setColHeaders(colHeaders.slice(0, -1));
-      setData(data.map(row => row.slice(0, -1)));
       const updatedTableInfo = {
         ...tableInfo,
         colHeaders: colHeaders.slice(0, -1),
         data: data.map(row => row.slice(0, -1))
       };
+      setColHeaders(updatedTableInfo.colHeaders);
+      setData(updatedTableInfo.data);
       updateTable(updatedTableInfo);
     }
   };
 
   const addRow = () => {
-    setRowHeaders([...rowHeaders, rowHeaders.length + 2022]);
-    setData([...data, [...data[data.length - 1]]]);
-    // hotRef.current.hotInstance.refreshDimensions(); // optional?
+    const updatedTableInfo = {
+      ...tableInfo,
+      rowHeaders: [...rowHeaders, 1200 + 400*rowHeaders.length],
+      data: [...data, [...data[data.length - 1]]]
+    };
+    setRowHeaders(updatedTableInfo.rowHeaders);
+    setData(updatedTableInfo.data);
+    updateTable(updatedTableInfo);
   };
 
   const removeRow = () => {
     if (data.length > 1) {
-      setRowHeaders(rowHeaders.slice(0, -1));
-      setData(data.slice(0, -1));
-      // hotRef.current.hotInstance.refreshDimensions(); // optional?
+      const updatedTableInfo = {
+        ...tableInfo,
+        rowHeaders: rowHeaders.slice(0, -1),
+        data: data.slice(0, -1)
+      };
+      setRowHeaders(updatedTableInfo.rowHeaders);
+      setData(updatedTableInfo.data);
+      updateTable(updatedTableInfo);
     }
   };
   return (
@@ -76,6 +105,11 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
               rowHeaderWidth={60}
               licenseKey="non-commercial-and-evaluation"
               ref={hotRef}
+              afterChange={(changes)=> {
+                if (changes) {
+                  handleDataChange(changes)
+                }
+              }}
             />
           </div>
         </div>
@@ -86,7 +120,7 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
               data={[colHeaders]}
               afterChange={(changes) => {
                 if (changes) {
-                  handleHeadersChange(changes);
+                  handleColHeadersChange(changes);
                 }
               }}
               height="auto"
@@ -102,7 +136,7 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
               data={[rowHeaders]}
               afterChange={(changes) => {
                 if (changes) {
-                  handleHeadersChange(changes);
+                  handleRowHeadersChange(changes);
                 }
               }}
               height="auto"

@@ -106,7 +106,7 @@ function App() {
                   t.key === updatedTable.key ? updatedTable : t
                 );
                 setTables(updatedTables);
-                console.log(updatedTables);
+                // console.log(updatedTables);
               }}
             />
           </div>

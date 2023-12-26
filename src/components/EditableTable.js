@@ -2,6 +2,9 @@ import React, { useRef, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 
 function EditableTable( {tableName, tableInfo, updateTable} ) {
+  // should have an edit icon on the right that can be clicked to toggle the col/row header editing
+  // in edit: should have a field to choose units (AFR vs Lambda) (eventually a fuel type dropdown)
+  
   const hotRef = useRef(null);
   const [colHeaders, setColHeaders] = useState(['0', '1', '2']);
   const [rowHeaders, setRowHeaders] = useState([800, 1600, 2000]);
@@ -11,7 +14,6 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
     [30, 15, 12]
   ]);
 
-  // Handle changes in headers
   const handleColHeadersChange = (changes) => {
     const updatedTableInfo = {
       ...tableInfo,
@@ -40,7 +42,6 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
   }
 
   const addColumn = () => {
-    // update formatting of all setter functions to match this one
     const updatedTableInfo = {
       ...tableInfo,
       colHeaders: [...colHeaders, `NewCol${colHeaders.length + 1}`],

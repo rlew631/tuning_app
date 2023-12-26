@@ -3,46 +3,24 @@ import React, { useState }from 'react';
 import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
 import EditableTable from './components/EditableTable';
+import FormattedJsonDisplay from './utils/textdisplay'
 // import { ExampleComponent } from './components/DemoTable';
 
 registerAllModules();
 
-function customStringify(object) {
-  if (Array.isArray(object)) {
-      // Join the array values with comma and space for inline display.
-      return `[${object.map(item => customStringify(item)).join(", ")}]`;
-  } else if (typeof object === 'object' && object !== null) {
-      // Create an array of stringified key-value pairs.
-      const properties = Object.keys(object).map(key => {
-          const value = customStringify(object[key]);
-          return `"${key}": ${value}`;
-      });
-      // Join the properties with a comma and newline for each key/value pair.
-      return `{\n\t${properties.join(",\n\t")}\n}`;
-  } else {
-      // Directly return the stringified version of the value.
-      return JSON.stringify(object);
-  }
-}
-
-function FormattedJsonDisplay({ data }) {
-  return (
-      <pre style={{"text-align" : "left"}}>
-          <code>
-              {customStringify(data)}
-          </code>
-      </pre>
-  );
-}
-
 function App() {
+  // Add dark mode
+  // should have option to show new table to the right where you can:
+  // - custom define row and col intervals
+  // - switch from AFR to lammbda and vice versa
+  // should have a toggle button to show plotly 3d scatter plot: https://plotly.com/javascript/3d-scatter-plots/
+  // for testing plotly chart should show both tables' data on it to make sure nothing is fubar
   const [tables, setTables] = useState([]);
   const [newTableName, setNewTableName] = useState('');
   const [removeTableName, setRemoveTableName] = useState('');
 
   const addTable = () => {
     if (newTableName) {
-      // const newTable = <EditableTable key={newTableName} tableName={newTableName} />;
       const newTable = {
         key: newTableName,
         colHeaders: ['0','1','2'],
@@ -106,7 +84,6 @@ function App() {
                   t.key === updatedTable.key ? updatedTable : t
                 );
                 setTables(updatedTables);
-                // console.log(updatedTables);
               }}
             />
           </div>

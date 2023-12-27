@@ -1,11 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { HotTable } from '@handsontable/react';
+import ScatterPlot from './Plot';
 
 function EditableTable( {tableName, tableInfo, updateTable} ) {
   // should have an edit icon on the right that can be clicked to toggle the col/row header editing
   // in edit: should have a field to choose units (AFR vs Lambda) (eventually a fuel type dropdown)
   
   const hotRef = useRef(null);
+  const [enableEdit, setEnableEdit] = useState(true)
+  const [showPlot, setShowPlot] = useState(false)
+  const [fuelType, setFuelType] = useState('gas')
   const [colHeaders, setColHeaders] = useState(['0', '1', '2']);
   const [rowHeaders, setRowHeaders] = useState([800, 1600, 2000]);
   const [data, setData] = useState([
@@ -13,6 +17,15 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
     [20, 11, 14],
     [30, 15, 12]
   ]);
+
+  const handleFuelTypeChange = (newVal) => {
+    const updatedTableInfo = {
+      ...tableInfo,
+    };
+    updatedTableInfo.fuelType = newVal
+    setFuelType(newVal)
+    updateTable(updatedTableInfo)
+  }
 
   const handleColHeadersChange = (changes) => {
     const updatedTableInfo = {
@@ -94,7 +107,7 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
       <div className='main-table-container'>
         <div className='data-table-container' style={{"width":`${60+100*colHeaders.length}px`}}>
           <div className='data-table table'>
-            <h3>Data</h3>
+            <h3>Fuel Scaling: {fuelType}</h3>
             <HotTable
               data={data}
               rowHeaders={rowHeaders}
@@ -114,41 +127,79 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
             />
           </div>
         </div>
-        <div className='table-axes-container'>
-          <div className='column-table axis-table table' style={{"width":`${60*colHeaders.length}px`}}>
-            <h3>Columns</h3>
-            <HotTable
-              data={[colHeaders]}
-              afterChange={(changes) => {
-                if (changes) {
-                  handleColHeadersChange(changes);
-                }
-              }}
-              height="auto"
-              colWidths={60}
-              licenseKey="non-commercial-and-evaluation"
-            />
-            <button onClick={addColumn}>Add</button>
-            <button onClick={removeColumn}>Remove</button>
+
+        { (!enableEdit && !showPlot) &&
+          <div>
+            <button onClick={() => setEnableEdit(true)}>Edit</button>
+            <br/>
+            <button onClick={() => {setShowPlot(true)}}>
+              Show Graph
+            </button>
+            <br/>
+            <button>MOVE THE "Remove Table" button here instead of having the dropdown!!</button>
           </div>
-          <div className='row-table axis-table table' style={{"width":`${60*rowHeaders.length}px`}}>
-            <h3>Rows</h3>
-            <HotTable
-              data={[rowHeaders]}
-              afterChange={(changes) => {
-                if (changes) {
-                  handleRowHeadersChange(changes);
-                }
-              }}
-              height="auto"
-              colWidths={60}
-              licenseKey="non-commercial-and-evaluation"
-            />
-            <button onClick={addRow}>Add</button>
-            <button onClick={removeRow}>Remove</button>
+        }
+
+        { enableEdit &&
+          <div className='table-axes-container edit-section'>
+            <div>
+              <button onClick={() => setEnableEdit(false)}>Done Editing</button>
+            </div>
+            <div>
+              <b>Units: </b>
+              <select
+                value={fuelType}
+                onChange={(e) => handleFuelTypeChange(e.target.value)}
+              >
+                <option value='gas'>AFR (gas)</option>
+                <option value='e85'>AFR (e85)</option>
+                <option value='lambda'>Lambda</option>
+              </select>
+            </div>
+            <div className='column-table axis-table table' style={{"width":`${60*colHeaders.length}px`}}>
+              <h3>Columns</h3>
+              <HotTable
+                data={[colHeaders]}
+                afterChange={(changes) => {
+                  if (changes) {
+                    handleColHeadersChange(changes);
+                  }
+                }}
+                height="auto"
+                colWidths={60}
+                licenseKey="non-commercial-and-evaluation"
+              />
+              <button onClick={addColumn}>Add</button>
+              <button onClick={removeColumn}>Remove</button>
+            </div>
+            <div className='row-table axis-table table' style={{"width":`${60*rowHeaders.length}px`}}>
+              <h3>Rows</h3>
+              <HotTable
+                data={[rowHeaders]}
+                afterChange={(changes) => {
+                  if (changes) {
+                    handleRowHeadersChange(changes);
+                  }
+                }}
+                height="auto"
+                colWidths={60}
+                licenseKey="non-commercial-and-evaluation"
+              />
+              <button onClick={addRow}>Add</button>
+              <button onClick={removeRow}>Remove</button>
+            </div>
           </div>
+        }
+
+        {showPlot && 
+          <div>
+            <button onClick={() => setShowPlot(false)}>Hide Graph</button>
+            <br/>
+            Not yet properly implemented... update mapData in Plot.js
+            <ScatterPlot tableInfo={tableInfo}/>
+          </div> 
+        }
         </div>
-      </div>
     </div>
   )
 }

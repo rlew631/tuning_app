@@ -29,7 +29,8 @@ function App() {
           [10, 11, 12],
           [20, 11, 14],
           [30, 15, 12]
-        ]
+        ],
+        fuelType: 'AFR (gas)'
       }
       setTables([...tables, newTable])
       setNewTableName('');

@@ -195,7 +195,7 @@ function EditableTable( {tableName, tableInfo, updateTable} ) {
           <div>
             <button onClick={() => setShowPlot(false)}>Hide Graph</button>
             <br/>
-            Not yet properly implemented... update mapData in Plot.js
+            Not yet properly implemented... update plotly config in Plot.js
             <ScatterPlot tableInfo={tableInfo}/>
           </div> 
         }

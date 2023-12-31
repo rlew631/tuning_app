@@ -4,7 +4,6 @@ import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
 import EditableTable from './components/EditableTable';
 import FormattedJsonDisplay from './utils/textdisplay'
-// import { ExampleComponent } from './components/DemoTable';
 
 registerAllModules();
 
@@ -90,13 +89,13 @@ function App() {
           </div>
         ))}
       </div>
-      <div>
+      {/* <div>
         {tables.map(table => (
           <div key={table.key}>
             <FormattedJsonDisplay data={table}/>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

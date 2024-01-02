@@ -3,8 +3,9 @@ import { HotTable } from '@handsontable/react';
 import ScatterPlot from './Plot';
 
 function EditableTable( {tableName, tableInfo, updateTable} ) {
-  // should have an edit icon on the right that can be clicked to toggle the col/row header editing
-  // in edit: should have a field to choose units (AFR vs Lambda) (eventually a fuel type dropdown)
+  // add some smart functionality for fuel type that can:
+  // - be passed to the plotting function
+  // - provide error feedback if values appear fucky
   
   const hotRef = useRef(null);
   const [enableEdit, setEnableEdit] = useState(true)

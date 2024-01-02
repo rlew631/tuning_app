@@ -11,8 +11,6 @@ function App() {
   // Add dark mode
   // should have option to show new table to the right where you can:
   // - custom define row and col intervals
-  // - switch from AFR to lammbda and vice versa
-  // should have a toggle button to show plotly 3d scatter plot: https://plotly.com/javascript/3d-scatter-plots/
   // for testing plotly chart should show both tables' data on it to make sure nothing is fubar
   const [tables, setTables] = useState([]);
   const [newTableName, setNewTableName] = useState('');
@@ -96,6 +94,11 @@ function App() {
           </div>
         ))}
       </div> */}
+      { (tables.length > 1) &&
+        <div>
+          Congrats! You have more than one table, the final table should show up here!
+        </div>
+      }
     </div>
   );
 }
